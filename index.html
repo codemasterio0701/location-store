@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Locator</title>
+    <link rel="stylesheet" href="css/store-locator.css">
+</head>
+<body>
+    <div class="store-locator-section" id="store-locator-section">
+        <!-- Trigger Button -->
+        <button class="store-locator-trigger" id="open-locator">
+            Select a preferred store
+        </button>
+
+        <!-- Modal -->
+        <div class="store-locator-modal" id="locator-modal">
+            <div class="store-locator-content">
+                <div class="store-locator-header">
+                    <h2 class="store-locator-title">Select a preferred store</h2>
+                    <button class="store-locator-close" id="close-locator" aria-label="Close">✕</button>
+                </div>
+
+                <div class="store-locator-body">
+                    <div class="store-locator-geolocation">
+                        Geolocation unavailable
+                    </div>
+
+                    <div class="store-locator-separator">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="store-locator-search">
+                        <label class="store-locator-label" for="zip">Zip Code</label>
+                        <div class="store-locator-container">
+                            <div class="store-locator-input-container">
+                                <input id="zip" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter zip code" class="store-locator-input">
+                            </div>
+                            <button id="search-zip" type="button" class="store-locator-button">Search</button>
+                        </div>
+                    </div>
+
+                    <div id="status" class="store-locator-status"></div>
+
+                    <div id="results" class="store-locator-results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/store-locator.js"></script>
+</body>
+</html>
