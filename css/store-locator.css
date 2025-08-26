@@ -144,20 +144,19 @@
 }
 
 .store-locator-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: var(--sl-text-muted);
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--sl-radius-sm);
-  transition: var(--sl-transition);
-  font-family: inherit;
+    background: none;
+    border: none;
+    font-size: var(--sl-font-size-sm);
+    color: var(--sl-text-secondary);
+    cursor: pointer;
+    padding: var(--sl-spacing-sm) var(--sl-spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--sl-spacing-xs);
+    border-radius: var(--sl-radius-sm);
+    transition: var(--sl-transition);
+    font-family: inherit;
+    font-weight: var(--sl-font-weight-semibold);
 }
 
 .store-locator-close:hover {
@@ -178,14 +177,44 @@
    =================================== */
 
 .store-locator-geolocation {
-  background: var(--sl-background-light);
-  border: 1px solid var(--sl-border-color);
-  border-radius: var(--sl-radius-md);
-  padding: var(--sl-spacing-lg);
-  margin-bottom: var(--sl-spacing-xl);
-  text-align: center;
-  color: var(--sl-text-muted);
-  font-size: var(--sl-font-size-sm);
+    background: var(--sl-background-light);
+    border: 1px solid var(--sl-border-color);
+    border-radius: var(--sl-radius-md);
+    padding: var(--sl-spacing-lg);
+    margin-bottom: var(--sl-spacing-xl);
+    text-align: center;
+    color: var(--sl-text-muted);
+    font-size: var(--sl-font-size-sm);
+}
+
+.store-locator-geo-button {
+    background: var(--sl-primary-color);
+    color: var(--sl-white);
+    border: none;
+    padding: var(--sl-spacing-lg) var(--sl-spacing-2xl);
+    border-radius: var(--sl-radius-md);
+    font-size: var(--sl-font-size-base);
+    font-weight: var(--sl-font-weight-bold);
+    cursor: pointer;
+    transition: var(--sl-transition);
+    font-family: inherit;
+    width: 100%;
+    max-width: 300px;
+}
+
+.store-locator-geo-button:hover {
+    background: var(--sl-primary-hover);
+    transform: translateY(-1px);
+}
+
+.store-locator-geo-button:active {
+    transform: translateY(0);
+}
+
+.store-locator-geo-button:disabled {
+    background: var(--sl-text-muted);
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* ===================================

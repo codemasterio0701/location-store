@@ -4,14 +4,16 @@
         ZIP_API_URL: 'https://api.zippopotam.us/us/',
         ZIP_API_TIMEOUT: 10000,
         EARTH_RADIUS_MILES: 3958.7613,
-        MAX_RESULTS: 2,
+        MAX_RESULTS: 8, // Show all stores
         ANIMATION_DURATION: 300,
         ERRORS: {
             ZIP_INVALID: 'Enter a valid 5-digit ZIP code.',
             ZIP_NOT_FOUND: 'Sorry, we couldn\'t find that ZIP code.',
             API_ERROR: 'Unable to find coordinates for this ZIP code.',
             NO_STORES: 'No stores found.',
-            SEARCHING: 'Finding nearest stores…'
+            SEARCHING: 'Finding nearest stores…',
+            GEOLOCATION_ERROR: 'Unable to access your location. Please try ZIP code search.',
+            GEOLOCATION_SEARCHING: 'Detecting your location…'
         }
     };
 
@@ -196,6 +198,38 @@
         return sortedStores.slice(0, limit);
     }
 
+    /**
+     * Get user's current location
+     * @returns {Promise<Object>} Coordinates object
+     */
+    function getCurrentLocation() {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error('Geolocation not supported'));
+                return;
+            }
+
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000 // 5 minutes
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    reject(new Error(CONFIG.ERRORS.GEOLOCATION_ERROR));
+                },
+                options
+            );
+        });
+    }
+
     function $(selector) {
         return document.querySelector(selector);
     }
@@ -227,7 +261,10 @@
             setTimeout(() => input.focus(), 100);
         }
 
-        clearResults();
+        // Show all stores at startup (sorted by distance from Philadelphia center)
+        const phillyCenter = { lat: 39.9526, lng: -75.1652 };
+        const allStores = sortStoresByDistance(phillyCenter.lat, phillyCenter.lng, STORES);
+        renderStores(allStores, 'in Philadelphia area');
         clearStatus();
     }
 
@@ -300,11 +337,11 @@
             // Get coordinates for ZIP code
             const coords = await zipToCoordinates(zip);
             
-            // Get nearest stores
-            const nearestStores = getNearestStores(coords.lat, coords.lng);
+            // Get all stores sorted by distance (no limit)
+            const allStores = sortStoresByDistance(coords.lat, coords.lng, STORES);
             
             // Render results
-            renderStores(nearestStores, `from ${zip}`);
+            renderStores(allStores, `from ${zip}`);
             clearStatus();
 
         } catch (error) {
@@ -327,6 +364,39 @@
     function handleZipKeydown(event) {
         if (event.key === 'Enter') {
             handleZipSearch();
+        }
+    }
+
+    /**
+     * Handle geolocation search
+     */
+    async function handleGeolocationSearch() {
+        const geoButton = $('#use-geolocation');
+        if (!geoButton) return;
+
+        // Disable button and show loading state
+        geoButton.disabled = true;
+        geoButton.textContent = 'Detecting location...';
+        setStatus(CONFIG.ERRORS.GEOLOCATION_SEARCHING);
+
+        try {
+            // Get user's current location
+            const coords = await getCurrentLocation();
+            
+            // Get all stores sorted by distance (no limit)
+            const allStores = sortStoresByDistance(coords.lat, coords.lng, STORES);
+            
+            // Render results
+            renderStores(allStores, 'using your location');
+            clearStatus();
+
+        } catch (error) {
+            console.error('Geolocation error:', error);
+            setStatus(CONFIG.ERRORS.GEOLOCATION_ERROR, true);
+        } finally {
+            // Re-enable button
+            geoButton.disabled = false;
+            geoButton.textContent = 'Use Current Location';
         }
     }
 
@@ -360,6 +430,12 @@
         const zipInput = $('#zip');
         if (zipInput) {
             zipInput.addEventListener('keydown', handleZipKeydown);
+        }
+
+        // Geolocation button
+        const geoButton = $('#use-geolocation');
+        if (geoButton) {
+            geoButton.addEventListener('click', handleGeolocationSearch);
         }
 
         // Keyboard navigation
